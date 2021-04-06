@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="./src/img/indexico.png" type="image/x-icon">
+    <!-- import -->
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="./bootstrap-4.4.1-dist/css/bootstrap.css">
+    <!-- Font Awesome CSS-->
+    <!-- <link rel="stylesheet" href="./src/benchres/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="./font-awesome-4.7.0/css/font-awesome.css">
+    <!-- Google fonts - Popppins for copy-->
+    <link rel="stylesheet" href="./src/benchres/css/css.css">
+    <!-- orion icons-->
+    <link rel="stylesheet" href="./src/benchres/css/orionicons.css">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="./src/benchres/css/style.blue.css" id="theme-stylesheet">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="./src/benchres/css/custom.css">
+    <!-- import End -->
+    <script src="./src/jquery-3.4.1.min.js"></script>
+    <script src="./sheetjs-master/xlsx.mini.js"></script>
+    <script src="./src/index.js"></script>
+    <title>随机派位系统v2.0</title>
+</head>
+<body class="d-flex flex-column h-100">
+
+        <header>
+      <!-- Fixed navbar -->
+      <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
+        <a class="navbar-brand" href="#">随机排位系统v2.0</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="modal" data-target="#aboutModal">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="again()">Again</a>
+            </li>
+            <!-- <li class="nav-item">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            </li> -->
+          </ul>
+          <form class="form-inline mt-2 mt-md-0">
+            <input class="form-control mr-sm-2 disabled" type="text" placeholder="Search Disabled" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0 disabled" type="submit">Search</button>
+          </form>
+        </div>
+      </nav>
+    </header>
+    
+    <!-- Begin page content -->
+    <main role="main" class="py-5" id="main">
+      <div class="container">
+        <!-- <h1 class="mt-5">Sticky footer with fixed navbar</h1>
+        <p class="lead">Pin a footer to the bottom of the viewport in desktop browsers with this custom HTML and CSS. A fixed navbar has been added with <code>padding-top: 60px;</code> on the <code>main &gt; .container</code>.</p>
+        <p>Back to <a href="../examples/sticky-footer/">the default sticky footer</a> minus the navbar.</p> -->
+        <br><br>
+        <div class="card" id="indexcard">
+          <div class="card-header">
+            参数控制 Options
+          </div>
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">为了更好地输出，请于此下输入相关参数。</h6>
+            <!-- rule -->
+            <p>
+              <a class="btn btn-outline-primary" data-toggle="collapse" href="#collapse1" role="button" aria-expanded="false" aria-controls="collapseExample">
+                座位表文件规范
+              </a>
+            </p>
+            <div class="collapse" id="collapse1">
+              <div class="card card-body">
+               边界：cE0cV1 讲台：qA4sD1 过道：gD6pF5 固定：dL2bB2 <br>
+               同一小组座位aCaHaE尾部加上数字 <br>
+               存储在sheet1中 左上角从A1开始
+              </div>
+            </div>
+            <!-- <form name="indexinput">
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="row">行</label>
+                  <input class="form-control" id="row" name="row">
+                </div>                
+                <div class="form-group col-md-6">
+                  <label for="row">列</label>
+                  <input class="form-control" id="col" name="col">
+                </div>  
+              </div>
+              <div clawss="form-group">
+                <label>小组总数</label>
+                <input type="text" class="form-control" id="group" name="groupnum" placeholder="在这里输入小组总数">
+              </div>
+            </form> -->
+            <!-- import1 -->
+            <div class="form-group">
+              <label for="FormControlFile1">导入组长名单</label>
+              <!-- <button type="button" class="btn btn-success" id="FormControlFile1">Input</button> -->
+              <form name="loadone">
+                <input name="onefileload" id="file1" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+              </form>
+              <script>//解析xlsx
+                var workbook1;
+                // document.getElementById("FormControlFile1").oninput=function(){
+                document.getElementById("file1").addEventListener("change",function(e){
+                  var files = e.target.files;
+                  console.log(files);
+                  // var files = $('input[name="groupleadfile"]').val();
+                  if(files.length == 0) return;
+                    var f = files[0];
+                    if(!/\.xlsx$/g.test(f.name)) {
+                        alert('仅支持读取xlsx格式！');
+                        return;
+                    }
+                    var reader=new FileReader();
+                    // var callback=loadd();
+                    reader.readAsBinaryString(f);
+                    reader.onload=function(e){
+                        var data=e.target.result;
+                        // console.log(data);
+                        workbook1=XLSX.read(data, {type: 'binary'});
+                    }
+                  
+                });
+              </script>
+            </div>
+            <!-- import2 -->
+            <div class=" form-group">
+              <label for="FormControlFile1">导入座位表名单</label>
+              <!-- <button type="button" class="btn btn-success" id="FormControlFile1">Input</button> -->
+              <form name="loadone">
+                <input name="onefileload" id="file2" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+              </form>
+              <script>
+                var workbook2;
+                var mastergroup={};
+                var prep={};
+                document.getElementById("file2").addEventListener("change",function(e){
+                  var files = e.target.files;
+                  console.log(files);
+                  // var files = $('input[name="groupleadfile"]').val();
+                  if(files.length == 0) return;
+                    var f = files[0];
+                    if(!/\.xlsx$/g.test(f.name)) {
+                        alert('仅支持读取xlsx格式！');
+                        return;
+                    }
+                    var reader=new FileReader();
+                    // var callback=loadd();
+                    reader.readAsBinaryString(f);
+                    reader.onload=function(e){
+                        var data=e.target.result;
+                        // console.log(data);
+                        workbook2=XLSX.read(data, {type: 'binary'});
+                    }
+                  
+                });
+              </script>
+            </div>
+            <button class=" btn btn-outline-success" onclick="submit()">提交</button>
+            
+          </div>
+        </div>
+        <br><br>
+        
+      </div>
+    </main>
+    <div class="card " id="indexchart">
+      <div class="card-header">
+        Outputs
+      </div>
+      <div class=" card-body">
+        <table class="table table-bordered " style="table-layout:fixed">
+          <tbody>
+            <tr id="re1"></tr>
+            <tr id="row1" style="display: none;">
+              <td></td>
+              <td></td><td></td>
+              <td></td><td></td>
+              <td></td><td>讲台</td>
+              <td></td><td></td>
+              <td></td><td></td>
+              <td></td><td>门</td>
+            </tr>
+            <!-- <tr>
+              <td>&nbsp;</td>
+              <td></td><td></td>
+              <td></td><td></td>
+              <td></td><td></td>
+              <td></td><td></td>
+              <td></td><td></td>
+              <td></td><td></td>
+            </tr> -->
+            
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+    <!-- <footer class="navbar navbar-default navbar-fixed-bottom mt-auto py-3">
+      <div class="container">
+        <span class="text-muted">Place sticky footer content here.</span>
+      </div>
+    </footer> -->
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> -->
+    <!-- 模态框 -->
+      <!-- about -->
+        <!-- Modal -->
+        <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <!-- <img src="./src/img/about.png" id="aboutpng" alt=""> -->
+                <h5 class="modal-title" id="exampleModalLabel">About</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Developed by @Uranium <br>
+                All rights reserved. <br>
+                Sep,2020.
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+              </div>
+            </div>
+          </div>
+        </div>
+    <script>
+      // 全局变量
+      var st2maxcol;
+      var st2maxrow;
+      var st1max;
+    </script>
+    <!-- import js -->
+    <script src="./src/benchres/vendor/popper.js/umd/popper.min.js"></script>
+    <script src="./bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>
+    <script src="./src/benchres/vendor/jquery.cookie/jquery.cookie.js"></script>
+    <script src="./src/benchres/js/js.cookie.min.js"></script>
+    <script src="./src/benchres/js/front.js"></script>
+</body>
+</html>
